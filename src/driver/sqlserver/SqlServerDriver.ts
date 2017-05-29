@@ -63,6 +63,12 @@ export class SqlServerDriver implements Driver {
      */
     protected logger: Logger;
 
+    /**
+     * Schema name. (Added support in mssql)
+     * default: "public"
+     */
+    public schemaName?: string;
+
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -72,6 +78,7 @@ export class SqlServerDriver implements Driver {
         this.options = DriverUtils.buildDriverOptions(options);
         this.logger = logger;
         this.mssql = mssql;
+        this.schemaName = options.schemaName || null;
 
         // validate options to make sure everything is set
         if (!this.options.host)
@@ -205,7 +212,10 @@ export class SqlServerDriver implements Driver {
      * Escapes a table name.
      */
     escapeTableName(tableName: string): string {
-        return `"${tableName}"`;
+        if(this.schemaName!==null)
+            return `"[${this.schemaName}]${tableName}"`;
+        else
+            return `"${tableName}"`;
     }
 
     /**
