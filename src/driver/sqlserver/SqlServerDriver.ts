@@ -78,7 +78,7 @@ export class SqlServerDriver implements Driver {
         this.options = DriverUtils.buildDriverOptions(options);
         this.logger = logger;
         this.mssql = mssql;
-        this.schemaName = options.schemaName || null;
+        this.schemaName = options.schemaName;
 
         // validate options to make sure everything is set
         if (!this.options.host)
@@ -212,8 +212,8 @@ export class SqlServerDriver implements Driver {
      * Escapes a table name.
      */
     escapeTableName(tableName: string): string {
-        if(this.schemaName!==null)
-            return `"[${this.schemaName}]${tableName}"`;
+        if (typeof this.schemaName !== "undefined")
+            return `"${this.schemaName}"."${tableName}"`;
         else
             return `"${tableName}"`;
     }
